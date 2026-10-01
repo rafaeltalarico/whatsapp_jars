@@ -1,0 +1,430 @@
+# Fluxo de atendimento do chatbot JARS.
+#
+# Todos os textos e menus do robô ficam neste arquivo: para alterar uma
+# mensagem ou incluir uma opção não é preciso mexer no código.
+#
+# Formatação do WhatsApp: *negrito*, _itálico_, *_negrito e itálico_*.
+# O marcador {escritorio} é substituído pelo nome do escritório em
+# negrito e itálico.
+#
+# Tipos de nó:
+#   menu       -> mostra opções numeradas e segue para o destino escolhido
+#   pergunta   -> aguarda uma resposta livre (texto ou documento) e segue
+#                 para o nó "proximo"
+#   encaminhar -> envia a mensagem final e passa a conversa para a equipe
+
+escritorio: "J. Alencar e R. Sousa Advogadas Associadas"
+
+inicio: menu_principal
+
+comandos:
+  voltar: "0"
+  inicio: "00"
+  finalizar: "#"
+
+sessao:
+  # Conversa parada com o robô por mais tempo que isso recomeça do início.
+  expira_bot_horas: 24
+  # Depois desse tempo sem mensagens, uma conversa que estava com a
+  # advogada volta a ser atendida pelo robô.
+  retorno_bot_apos_humano_horas: 12
+
+mensagens:
+  boas_vindas: |-
+    Olá! 👋 Seja bem-vindo(a) ao escritório {escritorio}.
+
+    Agradecemos o seu contato! Em breve, nossa equipe dará início ao seu atendimento.
+
+    🔒 Seus dados serão utilizados exclusivamente para o seu atendimento, conforme a Lei Geral de Proteção de Dados (LGPD).
+
+    Para começarmos, por favor, informe:
+
+    👤 *Nome completo:*
+    🔢 *CPF:* informe somente os números, sem pontos ou traços.
+
+    Após o envio dessas informações, vamos direcionar você para o atendimento adequado.
+
+    📌 *A qualquer momento, digite # para finalizar o atendimento.*
+
+  pedir_nome: |-
+    Por favor, informe seu 👤 *nome completo*.
+
+  pedir_cpf: |-
+    Por favor, informe seu 🔢 *CPF* (somente os números, sem pontos ou traços).
+
+  cpf_invalido: |-
+    O CPF informado não parece válido. 🤔
+    Por favor, confira e envie novamente somente os 11 números, sem pontos ou traços.
+
+  identificacao_concluida: |-
+    Obrigada pelas informações! 😊
+
+  opcao_invalida: |-
+    Não entendi a sua resposta. 🤔 Por favor, digite apenas o *número* de uma das opções abaixo.
+
+  anexo_em_menu: |-
+    📎 Documento recebido! Agora, por favor, digite o *número* da opção desejada.
+
+  encaminhado: |-
+    Recebemos suas informações! 😊 Em breve, uma de nossas advogadas dará continuidade ao seu atendimento.
+
+  encerramento: |-
+    Agradecemos o seu contato com o escritório {escritorio}. 💙
+
+    ⚠️ *ATENÇÃO:* O escritório não solicita senhas ou códigos e não realiza cobranças por terceiros sem prévia confirmação pelos nossos canais oficiais.
+
+    🚨 Cuidado com o *golpe do falso advogado*. Antes de realizar qualquer pagamento ou fornecer dados, confirme diretamente com nosso escritório.
+
+    *Agradecemos a confiança e desejamos um excelente dia!*
+
+    {escritorio}. 💙
+
+  rodape_completo: |-
+    📌 Para voltar ao menu anterior, digite *0*.
+    📌 Para retornar ao início, digite *00*.
+    📌 Para finalizar o atendimento, digite *#*.
+
+  rodape_finalizar: |-
+    📌 Para finalizar o atendimento a qualquer momento, digite *#*.
+
+nos:
+  # ------------------------------------------------------------------
+  # MENU PRINCIPAL
+  # ------------------------------------------------------------------
+  menu_principal:
+    tipo: menu
+    campo: Assunto
+    navegacao: finalizar
+    texto: |-
+      Agora, qual assunto traz você até nós?
+    opcoes:
+      1: {rotulo: "PASEP", destino: pasep_ano}
+      2: {rotulo: "DIREITO CIVIL", destino: civil}
+      3: {rotulo: "DIREITO DA SAÚDE", destino: saude}
+      4: {rotulo: "DIREITO BANCÁRIO", destino: bancario}
+      5: {rotulo: "DIREITO PREVIDENCIÁRIO", destino: previdenciario}
+      6: {rotulo: "REQUERIMENTOS ADMINISTRATIVOS", destino: requerimentos}
+      7: {rotulo: "[CONSULTA DE ANDAMENTO PROCESSUAL]", destino: andamento}
+      8: {rotulo: "CANAL DE SUPORTE TÉCNICO E COMERCIAL", destino: suporte}
+    instrucao: "Digite apenas o *número da opção* desejada."
+
+  # ------------------------------------------------------------------
+  # 1. PASEP
+  # ------------------------------------------------------------------
+  pasep_ano:
+    tipo: pergunta
+    campo: Ano da aposentadoria
+    texto: |-
+      *1. PASEP*
+
+      Para iniciarmos a triagem, informe:
+
+      📌 *Qual foi o ano da sua aposentadoria?*
+    proximo: pasep_extratos
+
+  pasep_extratos:
+    tipo: menu
+    campo: Extratos do PASEP já solicitados ao Banco do Brasil
+    texto: |-
+      📄 Você já solicitou ao Banco do Brasil os *extratos completos do PASEP*?
+    opcoes:
+      1: {rotulo: "SIM", destino: pasep_sim}
+      2: {rotulo: "NÃO", destino: pasep_nao}
+
+  pasep_sim:
+    tipo: pergunta
+    campo: Documentos do PASEP
+    texto: |-
+      Envie os documentos que recebeu para nossa análise. 📎
+    proximo: encaminhado
+
+  pasep_nao:
+    tipo: pergunta
+    campo: Comprovante de solicitação do PASEP
+    texto: |-
+      É necessário comparecer a uma agência do Banco do Brasil e solicitar:
+
+      • Extratos de microfilmagem;
+      • Extratos de transcrição;
+      • Histórico de saques;
+      • Comprovantes de eventuais saques realizados diretamente no caixa (“boca do caixa”).
+
+      📌 Essa documentação, ou o *comprovante de solicitação*, é essencial para a análise do caso.
+
+      Se já solicitou os documentos, mas ainda não os recebeu, *envie o comprovante da solicitação*.
+    proximo: encaminhado
+
+  # ------------------------------------------------------------------
+  # 2. DIREITO CIVIL
+  # ------------------------------------------------------------------
+  civil:
+    tipo: pergunta
+    campo: Relato (Direito Civil)
+    texto: |-
+      *2. DIREITO CIVIL*
+
+      Para entendermos inicialmente a situação, por favor, conte brevemente:
+
+      ➡️ *O que aconteceu?*
+      ➡️ *Quem está envolvido?*
+      ➡️ Existe contrato, cobrança, documento, processo ou algum prazo relacionado ao caso?
+
+      📎 Se possuir documentos, contratos, conversas, fotos, notificações ou outros comprovantes, poderá enviá-los nesta conversa.
+    proximo: encaminhado
+
+  # ------------------------------------------------------------------
+  # 3. DIREITO DA SAÚDE
+  # ------------------------------------------------------------------
+  saude:
+    tipo: menu
+    campo: Área da saúde
+    texto: |-
+      *3. DIREITO DA SAÚDE*
+
+      Seu caso está relacionado a:
+    opcoes:
+      1: {rotulo: "SUS", destino: saude_sus}
+      2: {rotulo: "PLANO DE SAÚDE", destino: saude_plano}
+    instrucao: "Digite *1* ou *2*."
+
+  saude_sus:
+    tipo: menu
+    campo: Situação (SUS)
+    texto: |-
+      *3.1 SUS*
+
+      Qual situação está ocorrendo?
+    opcoes:
+      1: {rotulo: "Negativa de procedimento", destino: saude_sus_relato}
+      2: {rotulo: "Negativa ou demora de tratamento", destino: saude_sus_relato}
+      3: {rotulo: "Negativa ou demora de medicamento", destino: saude_sus_relato}
+      4: {rotulo: "Outro assunto", destino: saude_sus_relato}
+    observacao: |-
+      📎 Se possuir, envie *relatório médico, prescrição, negativa, protocolo ou outros documentos fornecidos pelo SUS*.
+
+  saude_sus_relato:
+    tipo: pergunta
+    campo: Relato (SUS)
+    texto: |-
+      Por favor, conte brevemente o que está acontecendo e envie os documentos que possuir, como *relatório médico, prescrição, negativa, protocolo ou outros documentos fornecidos pelo SUS*. 📎
+    proximo: encaminhado
+
+  saude_plano:
+    tipo: menu
+    campo: Situação (plano de saúde)
+    texto: |-
+      *3.2 PLANO DE SAÚDE*
+
+      Qual situação está ocorrendo?
+    opcoes:
+      1: {rotulo: "Reajuste considerado abusivo", destino: saude_plano_relato}
+      2: {rotulo: "Negativa de tratamento", destino: saude_plano_relato}
+      3: {rotulo: "Negativa de medicamento", destino: saude_plano_relato}
+      4: {rotulo: "Negativa de procedimento/cirurgia", destino: saude_plano_relato}
+      5: {rotulo: "Tratamento relacionado ao TEA (autismo)", destino: saude_plano_relato}
+      6: {rotulo: "Outro assunto", destino: saude_plano_relato}
+    observacao: |-
+      📎 Se possível, envie também os documentos relacionados ao caso, como *carteirinha, contrato, boletos, negativa do plano, relatório médico e prescrição*.
+
+  saude_plano_relato:
+    tipo: pergunta
+    campo: Relato (plano de saúde)
+    texto: |-
+      Por favor, conte brevemente o que está acontecendo e envie os documentos relacionados ao caso, como *carteirinha, contrato, boletos, negativa do plano, relatório médico e prescrição*. 📎
+    proximo: encaminhado
+
+  # ------------------------------------------------------------------
+  # 4. DIREITO BANCÁRIO
+  # ------------------------------------------------------------------
+  bancario:
+    tipo: menu
+    campo: Situação bancária
+    texto: |-
+      *4. DIREITO BANCÁRIO*
+
+      Qual situação está ocorrendo?
+    opcoes:
+      1: {rotulo: "RMC – Reserva de Margem Consignável", destino: bancario_documentos}
+      2: {rotulo: "RCC – Reserva de Cartão Consignado", destino: bancario_documentos}
+      3: {rotulo: "PRONAMPE", destino: bancario_documentos}
+      4: {rotulo: "Revisão de contrato bancário", destino: bancario_documentos}
+      5: {rotulo: "Golpe ou fraude envolvendo PIX", destino: bancario_golpe}
+      6: {rotulo: "Desconto não reconhecido", destino: bancario_golpe}
+      7: {rotulo: "Outro problema bancário", destino: bancario_relato}
+
+  bancario_documentos:
+    tipo: menu
+    campo: Possui a documentação bancária
+    texto: |-
+      Para os casos de *RMC, RCC, PRONAMPE ou revisão de contratos bancários*, precisamos verificar inicialmente a documentação.
+
+      Você possui:
+
+      📄 Contrato(s) bancário(s);
+      📄 Extrato de benefícios;
+      📄 Extrato de empréstimos/consignados;
+      📄 Outros documentos relacionados à contratação?
+    opcoes:
+      1: {rotulo: "SIM", descricao: "envie os documentos para análise.", destino: bancario_documentos_envio}
+      2: {rotulo: "NÃO", descricao: "podemos orientar quais documentos devem ser solicitados.", destino: bancario_orientacao}
+
+  bancario_documentos_envio:
+    tipo: pergunta
+    campo: Documentos bancários
+    texto: |-
+      Envie os documentos para análise. 📎
+    proximo: encaminhado
+
+  bancario_orientacao:
+    tipo: encaminhar
+    texto: |-
+      Sem problemas! 😊 Em breve, uma de nossas advogadas vai orientar você sobre quais documentos devem ser solicitados.
+
+  bancario_golpe:
+    tipo: menu
+    campo: Sofreu golpe ou desconto não reconhecido
+    texto: |-
+      Para casos de *golpe, fraude, PIX ou desconto não reconhecido*, precisamos verificar inicialmente o que aconteceu e quais providências já foram tomadas.
+
+      Você sofreu algum golpe ou identificou uma movimentação/desconto que não reconhece?
+    opcoes:
+      1: {rotulo: "SIM", destino: bancario_golpe_banco}
+      2: {rotulo: "NÃO", destino: bancario_relato}
+
+  bancario_golpe_banco:
+    tipo: menu
+    campo: O banco já respondeu
+    texto: |-
+      Se a ocorrência foi recente, entre imediatamente em contato com o banco e solicite a *contestação da operação*. Em caso de PIX, solicite também o *MED – Mecanismo Especial de Devolução*.
+
+      Depois, envie:
+
+      📄 Extrato bancário;
+      📄 Comprovante da operação;
+      📄 Protocolo da reclamação ao banco;
+      📄 Comprovante de abertura do MED, se houver;
+      📄 Resposta do banco, caso já tenha recebido.
+
+      O banco já apresentou alguma resposta?
+    opcoes:
+      1: {rotulo: "SIM", descricao: "envie a resposta.", destino: bancario_golpe_resposta}
+      2: {rotulo: "NÃO", descricao: "envie os protocolos e comprovantes das reclamações realizadas.", destino: bancario_golpe_protocolos}
+
+  bancario_golpe_resposta:
+    tipo: pergunta
+    campo: Resposta do banco
+    texto: |-
+      Envie a resposta do banco e os demais documentos listados acima. 📎
+    proximo: encaminhado
+
+  bancario_golpe_protocolos:
+    tipo: pergunta
+    campo: Protocolos e comprovantes
+    texto: |-
+      Envie os protocolos e comprovantes das reclamações realizadas, além dos demais documentos listados acima. 📎
+    proximo: encaminhado
+
+  bancario_relato:
+    tipo: pergunta
+    campo: Relato (bancário)
+    texto: |-
+      Por favor, conte brevemente o que aconteceu e, se possuir, envie extratos, contratos ou outros documentos relacionados. 📎
+    proximo: encaminhado
+
+  # ------------------------------------------------------------------
+  # 5. DIREITO PREVIDENCIÁRIO
+  # ------------------------------------------------------------------
+  previdenciario:
+    tipo: menu
+    campo: Assunto previdenciário
+    texto: |-
+      *5. DIREITO PREVIDENCIÁRIO*
+
+      Qual assunto você deseja tratar?
+    opcoes:
+      1: {rotulo: "Aposentadoria", destino: previdenciario_relato}
+      2: {rotulo: "Pensão por morte", destino: previdenciario_relato}
+      3: {rotulo: "Salário-maternidade", destino: previdenciario_relato}
+      4: {rotulo: "Auxílio por incapacidade temporária (auxílio-doença)", destino: previdenciario_relato}
+      5: {rotulo: "Auxílio-acidente", destino: previdenciario_relato}
+      6: {rotulo: "Isenção de Imposto de Renda", destino: previdenciario_relato}
+      7: {rotulo: "BPC/LOAS – Idoso", destino: previdenciario_relato}
+      8: {rotulo: "BPC/LOAS – Pessoa com deficiência / TEA (autismo)", destino: previdenciario_relato}
+      9: {rotulo: "Planejamento previdenciário / análise do CNIS", destino: previdenciario_relato}
+      10: {rotulo: "Regime estatutário / servidor público", destino: previdenciario_relato}
+      11: {rotulo: "Outro assunto", destino: previdenciario_relato}
+    observacao: |-
+      📎 Se já possuir *CNIS, carta de decisão do INSS, processo administrativo, laudos, documentos de trabalho ou outros documentos relacionados*, poderá enviá-los para análise.
+
+  previdenciario_relato:
+    tipo: pergunta
+    campo: Relato (previdenciário)
+    texto: |-
+      Por favor, conte brevemente sua situação e, se possuir, envie *CNIS, carta de decisão do INSS, processo administrativo, laudos, documentos de trabalho ou outros documentos relacionados*. 📎
+    proximo: encaminhado
+
+  # ------------------------------------------------------------------
+  # 6. REQUERIMENTOS ADMINISTRATIVOS
+  # ------------------------------------------------------------------
+  requerimentos:
+    tipo: pergunta
+    campo: Requerimento administrativo
+    texto: |-
+      *6. REQUERIMENTOS ADMINISTRATIVOS*
+
+      Para direcionarmos corretamente seu atendimento, informe:
+
+      🏛️ *1. Qual órgão ou repartição pública está envolvido?*
+
+      📝 *2. Qual é o objetivo do requerimento ou recurso?*
+
+      📌 *3. Você já realizou algum protocolo?*
+
+      *SIM:* envie o número do protocolo e os documentos relacionados.
+
+      *NÃO:* explique brevemente o que precisa solicitar.
+
+      📎 Se possuir decisão, negativa, notificação, protocolo ou outro documento do órgão público, envie também.
+    proximo: encaminhado
+
+  # ------------------------------------------------------------------
+  # 7. [CONSULTA DE ANDAMENTO PROCESSUAL]
+  # ------------------------------------------------------------------
+  andamento:
+    tipo: encaminhar
+    texto: |-
+      *7. [CONSULTA DE ANDAMENTO PROCESSUAL]*
+
+      Aguarde um instante, que um de nossos advogados entrará em contato. 😊
+
+  # ------------------------------------------------------------------
+  # 8. CANAL DE SUPORTE TÉCNICO E COMERCIAL
+  # ------------------------------------------------------------------
+  suporte:
+    tipo: menu
+    campo: Canal de suporte
+    texto: |-
+      *8. CANAL DE SUPORTE TÉCNICO E COMERCIAL*
+
+      Esta opção é destinada a *parceiros comerciais e demais assuntos relacionados ao suporte técnico e comercial do escritório*.
+
+      Se for o seu caso:
+    opcoes:
+      1: {rotulo: "SUPORTE", destino: suporte_relato}
+
+  suporte_relato:
+    tipo: pergunta
+    campo: Motivo do contato (suporte)
+    texto: |-
+      *8.1 SUPORTE*
+
+      Por favor, informe brevemente o motivo do seu contato e, se já possui um responsável ou contato no escritório, informe também o nome.
+
+      Nossa equipe irá direcionar sua solicitação ao setor responsável.
+    proximo: encaminhado
+
+  # ------------------------------------------------------------------
+  # ENCAMINHAMENTO PADRÃO PARA A EQUIPE
+  # ------------------------------------------------------------------
+  encaminhado:
+    tipo: encaminhar
