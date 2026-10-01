@@ -158,7 +158,7 @@ def test_fluxo_pasep_completo_gera_resumo(conversa):
     conversa.diz("1")
     resultado = conversa.envia(DOCUMENTO)
     assert conversa.sessao.status is Status.AGUARDANDO_HUMANO
-    assert "advogadas dará continuidade" in conversa.texto
+    assert "um de nossos advogados dará continuidade" in conversa.texto
     resumo = resultado.encaminhamento
     assert resumo is not None
     assert "Maria da Silva" in resumo

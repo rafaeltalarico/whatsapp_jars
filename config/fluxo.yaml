@@ -66,7 +66,7 @@ mensagens:
     📎 Documento recebido! Agora, por favor, digite o *número* da opção desejada.
 
   encaminhado: |-
-    Recebemos suas informações! 😊 Em breve, uma de nossas advogadas dará continuidade ao seu atendimento.
+    Recebemos suas informações! 😊 Em breve, um de nossos advogados dará continuidade ao seu atendimento.
 
   encerramento: |-
     Agradecemos o seu contato com o escritório {escritorio}. 💙
@@ -278,7 +278,7 @@ nos:
   bancario_orientacao:
     tipo: encaminhar
     texto: |-
-      Sem problemas! 😊 Em breve, uma de nossas advogadas vai orientar você sobre quais documentos devem ser solicitados.
+      Sem problemas! 😊 Em breve, um de nossos advogados vai orientar você sobre quais documentos devem ser solicitados.
 
   bancario_golpe:
     tipo: menu
